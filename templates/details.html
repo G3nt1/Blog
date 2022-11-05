@@ -1,0 +1,214 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        section {
+            padding: 80px;
+        }
+
+        .details-card {
+            background: #ecf0f1;
+        }
+
+        .card-content {
+            background: #ffffff;
+            border: 4px;
+            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
+        }
+
+        .card-img {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+            z-index: 1;
+        }
+
+        .card-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .card-img span {
+            position: absolute;
+            top: 15%;
+            left: 12%;
+            background: #1ABC9C;
+            padding: 16px;
+            color: #fff;
+            font-size: 12px;
+            border-radius: 4px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            -ms-border-radius: 4px;
+            -o-border-radius: 4px;
+            transform: translate(-50%, -50%);
+        }
+
+        .card-img span h4 {
+            font-size: 12px;
+            margin: 0;
+            padding: 10px 5px;
+            line-height: 0;
+        }
+
+        .card-desc {
+            padding: 1.25rem;
+        }
+
+        .card-desc h3 {
+            color: #000000;
+            font-weight: 600;
+            font-size: 1.5em;
+            line-height: 1.3em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding: 0;
+        }
+
+        .card-desc p {
+            color: #747373;
+            font-weight: 400;
+            font-size: 1em;
+            line-height: 1.5;
+            margin: 0 0 20px;
+            padding: 0;
+            font-family: 'Raleway', sans-serif;
+        }
+
+
+        .row h5 {
+
+            color: #5b80b2;
+        }
+
+        .row strong {
+
+            color: #5b80b2;
+        }
+         span{
+           padding: 10px;
+            color: #5b80b2;
+        }
+
+    </style>
+
+    <section class="details-card">
+        <div class="container-center">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="card-content">
+                        <div class="card-img">
+                            <img src="{{ post.image.url }}" alt="">
+                        </div>
+                        <span class="card-desc">
+                            <h3>{{ post.title }}</h3>
+                            <p>{{ post.body }}</p>
+
+                            <img src="{{ post.author.profile.profile_image.url }}"
+                                 class="img-circle"
+
+                                 height="45" width="45" alt="Avatar"> <a href="{% url 'profile' pk=post.author_id %}">
+                            <strong>{{ post.author.profile }}</strong></a>
+                            <hr>
+                            <p>
+                                <italic>{{ post.posted }}</italic>
+                                <italic> | Category : <strong>{{ post.category }}</strong></italic>
+                            </p>
+
+                            <form action="" method="POST" class="ui form">
+                                {% csrf_token %}
+                                <input type="hidden" name="'post_id" value="{{ post.id }}">
+                                {% if user not in post.likes.all %}
+                                    <button class="btn btn-success" name="post_id" value="{{ post.id }}" type="submit">
+                                        Like
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-danger" name="post_id" value="{{ post.id }}" type="submit">
+                                        Unlike
+                                    </button>
+                                {% endif %}
+                           <button type="button" class="btn btn-primary" id="liveToastBtn">{{ post.num_likes }} Likes</button>
+
+                        <div class="toast-container position-relative bottom-0 end-0 p-65">
+                          <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                              <strong class="me-auto">Last Likes</strong>
+                              <small>Last liked by @{{ post.likes.first }}</small>
+                              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                               {% for like in post.likes.all %}
+                            <div class="toast-body">
+                              <img src="{{ like.profile.profile_image.url }}"
+                                 class="img-circle"
+
+                                 height="25" width="25" alt="">
+                             <span>{{ like.username }},</span>
+                            </div>
+                              {% endfor %}
+                          </div>
+                        </div>
+
+
+{#                            <span> {{ post.num_likes }} Likes</span>#}
+{#                            (#}
+{#                            {% for like in post.likes.all %}#}
+{#                            <span> {{ like.username }},</span>#}
+{#                            {% endfor %}#}
+{#                                            )#}
+
+                                <br>
+                                <span class="position-relative">
+                                    Comments <i
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">{{ post.comments.count }} </i></span>
+                            </form>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+                <h4>Leave a Comment:</h4>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    {#                                        {{ forms.as_div }}#}
+                    <div class="form-group">
+                        <label>
+                    <textarea name="body" class="form-control" rows="3" required
+                              placeholder="Comment Here......."></textarea>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add Post</button>
+                </form>
+                <br><br>
+
+                <p><span class="badge"></span> Comments:</p><br>
+                <div class="row">
+                    {% for comment in post.comments.all %}
+                        <article>
+                            <img src="{{ comment.user.profile.profile_image.url }}"
+                                 class="img-circle"
+
+                                 height="25" width="25" alt="Avatar">
+
+                            <strong>{{ comment.user }}</strong>
+
+                            <italic class="text-muted">Created at {{ comment.posted|timesince }} ago</italic>
+                            <hr>
+                            <h4>{{ comment.body }}</h4>
+                        </article>
+                        <hr>
+                    {% endfor %}
+                </div>
+            </div>
+    </section>
+    <script>
+    const toastTrigger = document.getElementById('liveToastBtn')
+const toastLiveExample = document.getElementById('liveToast')
+if (toastTrigger) {
+  toastTrigger.addEventListener('click', () => {
+    const toast = new bootstrap.Toast(toastLiveExample)
+
+    toast.show()
+  })
+}
+    </script>
+{% endblock %}

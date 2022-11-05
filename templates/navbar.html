@@ -1,0 +1,109 @@
+{% load static %}
+<style>
+    a {
+        text-decoration: none;
+        color: #0c7f90;
+        font-size: 25px;
+        margin-top: 10px;
+        margin-right: 50px;
+        margin-left: auto;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    i {
+        text-decoration: none;
+        color: #0c7f90;
+        font-size: 25px;
+        margin-top: 10px;
+        margin-right: 50px;
+        margin-left: auto;
+        font-weight: 500;
+        cursor: pointer;
+    }
+</style>
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+    <!-- Button trigger modal -->
+<a type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+ bookPost
+</a>
+
+<!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Welcome in Our blogs!! Here you can read our rules and regulations</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-info">
+
+                Why do we use it?
+
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+{#        <i class="text info" href="{% url 'home' %}">bookPost</i>#}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'new_post' %}">Add New Post</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'home' %}" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Category
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for category in categories %}
+                            <a href="{% url 'home' %}?category={{ category.name }}" class="nav-link px-0"> <span
+                                    class="d-none d-sm-inline">{{ category.name }}</span>
+                                <br>({{ category.post_set.count }})
+                            </a>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+
+            {% if user.is_authenticated %}
+                <div class="dropdown md-4">
+                    <a href="#"
+                       class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                       id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ user.profile.profile_image.url }}" alt="" width="40" height="40"
+                             class="rounded-circle">
+                        <i class=""> @{{ user.username }}</i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-light text-small shadow">
+                        <li><a class="dropdown-item" href="{% url 'profile-update' %}">Settings</a></li>
+                        <li><a class="dropdown-item" href="{% url 'profile' pk=user.id %}">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+                    </ul>
+                </div>
+
+            {% else %}
+                <span><a type="submit" href="{% url 'login' %}" class="btn  btn-info text-light">Login</a>
+                <a type="submit" href="{% url 'register' %}" class="btn  btn-info text-light">Register</a></span>
+            {% endif %}
+            <form class="d-flex" role="search" method="get" action="{% url 'search' %}">
+                <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-info" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
